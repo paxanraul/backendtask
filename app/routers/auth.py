@@ -1,0 +1,51 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.schemas.auth import LoginRequest, TokenResponse
+from app.schemas.user import UserRegister, UserResponse
+from app.services.user_service import get_user_by_email, create_user
+from app.core.security import verify_password, create_access_token
+
+router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.post("/register", response_model=UserResponse, status_code=201)
+def register(data: UserRegister, db: Session = Depends(get_db)):
+    if data.password != data.password_confirm:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Пароли не совпадают!"
+        )
+    
+    existing_user = get_user_by_email(db, data.email)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Данный email уже существует."
+        )
+    
+
+    user = create_user(db, data)
+    return user
+
+
+@router.post("/login", response_model=TokenResponse)
+def login(data: LoginRequest, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, data.email)
+
+    if not user or not verify_password(data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Такого пользователя не существует или неверный пароль."
+        )
+    
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Аккаунт деактивирован"
+        )
+    
+    token = create_access_token(data={"sub": str(user.id)})
+
+    return TokenResponse(access_token=token)
