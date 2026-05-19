@@ -6,8 +6,13 @@ from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.user import UserRegister, UserResponse
 from app.services.user_service import get_user_by_email, create_user
 from app.core.security import verify_password, create_access_token
+from app.dependencies.auth import get_current_user
+from app.models.token_blacklist import TokenBlackList
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+bearer_scheme = HTTPBearer()
 
 
 @router.post("/register", response_model=UserResponse, status_code=201)
@@ -49,3 +54,21 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     token = create_access_token(data={"sub": str(user.id)})
 
     return TokenResponse(access_token=token)
+
+
+@router.post("/logout", status_code=status.HTTP_200_OK)
+def logout(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    token = credentials.credentials
+
+    blacklisted = TokenBlackList(
+        token=token,
+        user_id=current_user.id
+    )
+    db.add(blacklisted)
+    db.commit()
+
+    return {"detail": "Успешный выход из системы"}
