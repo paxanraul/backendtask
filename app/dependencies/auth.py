@@ -19,7 +19,12 @@ def get_current_user(
 
     in_blacklist = db.query(TokenBlackList).filter(
         TokenBlackList.token == token
-    )
+    ).first()
+    if in_blacklist:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Токен недействителен"
+        )
 
 
     payload = decode_access_token(token)
