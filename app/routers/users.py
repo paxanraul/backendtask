@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.dependencies import get_current_user
+from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.schemas.user import UserResponse, UserUpdate
 from app.services.user_service import update_user, deactivate_user
@@ -23,7 +23,7 @@ def update_me(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    return update_user(data, current_user, db)
+    return update_user(db, current_user, data)
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
@@ -32,4 +32,4 @@ def delete_me(
     db: Session = Depends(get_db)
 ):
     
-    deactivate_user(current_user, db)
+    deactivate_user(db, current_user)
