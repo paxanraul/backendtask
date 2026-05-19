@@ -22,3 +22,8 @@ def create_user(db: Session, data: UserRegister) -> User:
     db.commit()
     db.refresh(user)
     return user
+
+
+def deactivate_user(db: Session, user: User) -> None:
+    user.is_active = False
+    db.commit()
