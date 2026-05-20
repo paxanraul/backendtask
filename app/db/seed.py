@@ -14,7 +14,7 @@ def seed_roles(db: Session):
     for role_data in roles:
         exists = db.query(Role).filter(Role.id == role_data["id"]).first()
         if not exists:
-            db.add(Role)(**role_data)
+            db.add(Role(**role_data))
     db.commit()
 
 
@@ -64,7 +64,7 @@ def seed_access_rules(db: Session):
     for rule in rules:
         exists = db.query(AccessRoleRule).filter(
             AccessRoleRule.role_id == rule["role_id"],
-            AccessRoleRule.element_id == rule["element_data"]
+            AccessRoleRule.element_id == rule["element_id"]
         ).first()
         if not exists:
             db.add(AccessRoleRule(**rule))
