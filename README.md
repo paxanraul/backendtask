@@ -1,6 +1,6 @@
 # Backend Auth API
 
-🚀 **Swagger UI:** https://backendtask-production-1024.up.railway.app/docs
+🚀 **Swagger UI:** https://backendtask-wc13.onrender.com/docs
 
 REST API с системой аутентификации и разграничения прав доступа на основе ролей.
 
