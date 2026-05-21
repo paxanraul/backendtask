@@ -23,7 +23,7 @@ def get_all_permissions(db: Session) -> list[AccessRoleRule]:
 
 
 def update_permission(db: Session, rule_id: int, data: PermissionUpdate) -> AccessRoleRule | None:
-    rule = db.query(AccessRoleRule).filter(AccessRoleRule == rule_id).first()
+    rule = db.query(AccessRoleRule).filter(AccessRoleRule.id == rule_id).first()
     if not rule:
         return None
     update_data = data.model_dump(exclude_none=True)
