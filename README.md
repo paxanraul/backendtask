@@ -83,6 +83,6 @@ Swagger UI: http://localhost:8000/docs
 
 | Email | Пароль | Роль |
 |-------|--------|------|
-| admin@example.com | admin123 | admin |
+| admin@admin.com | admin123 | admin |
 
 Остальных пользователей можно зарегистрировать через `/auth/register` (по умолчанию роль — user).
