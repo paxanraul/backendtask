@@ -76,6 +76,7 @@ def run_seed(db: Session):
     seed_roles(db)
     seed_business_elements(db)
     seed_access_rules(db)
+    seed_admin(db)
     print("Тестовые данные добавлены")
 
 
