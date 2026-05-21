@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from app.models.role import Role
 from app.models.permission import BusinessElement, AccessRoleRule
-
+from app.core.security import hash_password
+from app.models.user import User
 
 def seed_roles(db: Session):
     roles = [
@@ -76,3 +77,19 @@ def run_seed(db: Session):
     seed_business_elements(db)
     seed_access_rules(db)
     print("Тестовые данные добавлены")
+
+
+def seed_admin(db: Session):
+    exists = db.query(User).filter(User.email == "admin@admin.com").first()
+    if not exists:
+        admin = User(
+            first_name="Admin",
+            last_name="Admin",
+            email="admin@admin.com",
+            hashed_password=hash_password("admin123"),
+            role_id=1,
+            is_active=True
+        )
+        db.add(admin)
+        db.commit()
+        print("Admin пользователь создан")
