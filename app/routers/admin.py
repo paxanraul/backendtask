@@ -45,7 +45,7 @@ def list_permissions(
     current_user = Depends(check_permission("access_rules", "read")),
     db: Session = Depends(get_db)
 ):
-    return get_all_permissions
+    return get_all_permissions(db)
 
 
 @router.patch("/permissions/{rule_id}")
