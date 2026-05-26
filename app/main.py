@@ -4,6 +4,7 @@ from app.routers import auth, users, mock, admin
 from app.models import user, role, permission, token_blacklist 
 from app.db.seed import run_seed
 from app.db.session import SessionLocal
+from app.middleware.logging import log_requests
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,6 +16,8 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Backend", version="1.0.0", lifespan=lifespan)
+
+app.middleware("http")(log_requests)
 
 app.include_router(auth.router)
 app.include_router(users.router)
