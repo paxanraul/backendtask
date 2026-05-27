@@ -2,7 +2,7 @@ import os
 os.environ["DATABASE_URL"] = "sqlite:///./test.db"
 os.environ["SECRET_KEY"] = "testsecretkey123456789"
 os.environ["ALGORITHM"] = "HS256"
-os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"] = 30
+os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"] = "30"
 
 import pytest
 
