@@ -7,7 +7,8 @@ def register_data():
         "first_name": "Test",
         "last_name": "User",
         "email": "test@test.com",
-        "password": "testpassword123"
+        "password": "testpassword123",
+        "password_confirm": "testpassword123"
     }
 
 

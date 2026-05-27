@@ -7,7 +7,8 @@ def user_client(client):
         "first_name": "Test",
         "last_name": "User",
         "email": "user@test.com",
-        "password": "testpassword123"
+        "password": "testpassword123",
+        "password_confirm": "testpassword123"
     })
     login = client.post("/auth/login", json={
         "email": "user@test.com",
