@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
@@ -10,6 +10,7 @@ from app.core.security import verify_password, create_access_token
 from app.dependencies.auth import get_current_user
 from app.models.token_blacklist import TokenBlackList
 from app.models.user import User
+from app.core.limiter import limiter
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -17,7 +18,8 @@ bearer_scheme = HTTPBearer()
 
 
 @router.post("/register", response_model=UserResponse, status_code=201)
-def register(data: UserRegister, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def register(request: Request, data: UserRegister, db: Session = Depends(get_db)):
     if data.password != data.password_confirm:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,7 +39,8 @@ def register(data: UserRegister, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(data: LoginRequest, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def login(request: Request, data: LoginRequest, db: Session = Depends(get_db)):
     user = get_user_by_email(db, data.email)
 
     if not user or not verify_password(data.password, user.hashed_password):
