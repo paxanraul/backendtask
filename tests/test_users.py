@@ -21,9 +21,8 @@ def auth_client(client):
 
 def test_get_me_unauthorized(client):
     response = client.get("/users/me")
-    assert response.status_code == 200
+    assert response.status_code == 401
     data = response.json()
-    assert data["email"] == "test@test.com"
 
 
 def test_get_me_success(auth_client):
@@ -43,6 +42,6 @@ def test_update_me(auth_client):
 
 def test_delete_me(auth_client):
     response = auth_client.delete("/users/me")
-    assert response.status_code == 200
+    assert response.status_code == 204
     response = auth_client.get("/users/me")
     assert response.status_code == 401
